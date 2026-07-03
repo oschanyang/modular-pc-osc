@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공지사항 | 모듈형 PC 공동주택 연구단</title>
+<meta name="description" content="모듈형 PC 공동주택 연구단 공지사항 및 자료실">
+<link rel="stylesheet" href="assets/css/style.css?v=2">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="index.html"><img src="assets/images/logo-icon.png" class="brand-logo" alt="모듈형 PC 공동주택 연구단 로고">모듈형 PC 공동주택 연구단</a>
+    <ul class="menu">
+      <li><a href="about-method.html">연구단소개</a>
+        <div class="dropdown">
+          <a href="about-method.html">모듈형 PC 공법 소개</a>
+          <a href="about-intro.html">연구단 소개</a>
+          <a href="about-goal.html">연구목표</a>
+        </div></li>
+      <li><a href="research-plan.html">연구성과</a>
+        <div class="dropdown">
+          <a href="research-plan.html">연구수행계획</a>
+          <a href="research-results.html">연구성과</a>
+        </div></li>
+      <li><a href="news-events.html">소식</a>
+        <div class="dropdown">
+          <a href="news-events.html">행사</a>
+          <a href="news-press.html">보도자료</a>
+        </div></li>
+      <li><a href="resources-notice.html">자료실</a>
+        <div class="dropdown"><a href="resources-notice.html">공지사항</a></div></li>
+    </ul>
+    <button class="nav-toggle" aria-label="메뉴 열기"><span></span></button>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="container">
+    <p class="crumb"><a href="index.html">홈</a> · 자료실 · 공지사항</p>
+    <h1>공지사항</h1>
+    <p>연구단의 주요 공지사항과 자료를 안내합니다.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="board" id="notice-board">
+      <div class="row head">
+        <span class="no">번호</span>
+        <span class="ttl">제목</span>
+        <span class="date">등록일</span>
+      </div>
+      <div id="notice-list"></div>
+      <div class="empty-state" id="notice-empty">
+        <div class="ic">📌</div>
+        <p>등록된 공지사항이 없습니다.<br>새로운 공지사항이 등록되면 이곳에 게시됩니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container wide">
+    <div class="footer-grid">
+      <div class="f-brand">모듈형 PC 공동주택 연구단
+        <p>PC 공동주택의 고성능·고층화·표준화 핵심기술 개발 및 실증<br>주관연구개발기관 : 한양대학교 ERICA 산학협력단 · 연구책임자 : 안용한<br>연구기간 : 2025.04.10 ~ 2029.12.31 · 총 연구개발비 : 약 298억 원<br>실증 발주 : 경기주택도시공사 · 실증사업자 : 동부건설 · 제작 : NRB</p></div>
+      <div class="f-links"><h4>연구단소개</h4>
+        <a href="about-method.html">모듈형 PC 공법 소개</a><a href="about-intro.html">연구단 소개</a><a href="about-goal.html">연구목표</a></div>
+      <div class="f-links"><h4>연구성과 · 소식</h4>
+        <a href="research-plan.html">연구수행계획</a><a href="research-results.html">연구성과</a>
+        <a href="news-events.html">행사 · 보도자료</a><a href="resources-notice.html">공지사항</a></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 모듈형 PC 공동주택 연구단. All rights reserved.</span>
+      <span>총 연구기간 2025.04.10 ~ 2029.12.31</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+<script>
+/* 자료실 목록 렌더링 — assets/data/notices.json (Decap CMS가 관리) */
+(function () {
+  var listEl = document.getElementById("notice-list");
+  var emptyEl = document.getElementById("notice-empty");
+  if (!listEl) return;
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
+  fetch("assets/data/notices.json", { cache: "no-store" })
+    .then(function (r) { return r.ok ? r.json() : { notices: [] }; })
+    .then(function (d) {
+      var items = (d && d.notices) ? d.notices.slice() : [];
+      if (!items.length) return;                 // 비어 있으면 안내문구 유지
+      if (emptyEl) emptyEl.style.display = "none";
+      items.sort(function (a, b) { return String(b.date || "").localeCompare(String(a.date || "")); });
+      var total = items.length;
+      items.forEach(function (it, i) {
+        var hasFile = it.file && String(it.file).trim();
+        var row = document.createElement(hasFile ? "a" : "div");
+        row.className = "row";
+        if (hasFile) { row.href = it.file; row.setAttribute("download", ""); }
+        var cat = it.category ? '<span class="cat">' + esc(it.category) + "</span>" : "";
+        var dl = hasFile ? ' <span style="color:var(--blue);font-size:13px;font-weight:600">첨부 ⬇</span>' : "";
+        row.innerHTML =
+          '<span class="no">' + (total - i) + "</span>" +
+          '<span class="ttl">' + cat + esc(it.title || "") + dl + "</span>" +
+          '<span class="date">' + esc(it.date || "") + "</span>";
+        listEl.appendChild(row);
+      });
+    })
+    .catch(function () { /* 로컬(file://) 등 fetch 불가 시 안내문구 유지 */ });
+})();
+</script>
+</body>
+</html>

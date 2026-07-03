@@ -1,0 +1,40 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# 첨부파일 저장 위치
+media_folder: "assets/downloads"
+public_folder: "/assets/downloads"
+
+locale: "ko"
+
+# 관리 화면 문구
+site_url: "/"
+display_url: "/"
+
+collections:
+  - name: "resources"
+    label: "자료실"
+    description: "공지사항 및 자료 관리"
+    files:
+      - name: "notices"
+        label: "공지사항 목록"
+        file: "assets/data/notices.json"
+        format: "json"
+        description: "공지/자료 목록. '추가' 버튼으로 새 항목을 등록하세요."
+        fields:
+          - label: "공지 목록"
+            name: "notices"
+            widget: "list"
+            label_singular: "공지"
+            summary: "{{fields.date}} · {{fields.category}} · {{fields.title}}"
+            fields:
+              - { label: "제목", name: "title", widget: "string" }
+              - label: "분류"
+                name: "category"
+                widget: "select"
+                options: ["공지", "자료", "행사", "보도자료"]
+                default: "공지"
+              - { label: "날짜", name: "date", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
+              - { label: "첨부파일", name: "file", widget: "file", required: false, hint: "PDF, HWP, ZIP 등 (선택)" }
+              - { label: "내용(선택)", name: "body", widget: "text", required: false }
