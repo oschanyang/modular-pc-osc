@@ -141,6 +141,10 @@
     var toc = document.createElement("nav");
     toc.className = "page-toc";
     toc.setAttribute("aria-label", "페이지 목차");
+    var label = document.createElement("p");
+    label.className = "toc-label";
+    label.textContent = "목차";
+    toc.appendChild(label);
     var ul = document.createElement("ul");
     Array.prototype.forEach.call(secs, function (s, i) {
       if (!s.id) s.id = "sec-" + (i + 1);
@@ -169,6 +173,26 @@
       Array.prototype.forEach.call(secs, function (s) { io.observe(s); });
     }
     setActive(secs[0].id);
+
+    // 어두운(네이비) 섹션 위를 지날 때 목차 색상 자동 반전
+    var darkSecs = document.querySelectorAll(".section.dark");
+    if (darkSecs.length) {
+      var ticking = false;
+      function checkDark() {
+        var r = toc.getBoundingClientRect();
+        var onDark = false;
+        Array.prototype.forEach.call(darkSecs, function (d) {
+          var dr = d.getBoundingClientRect();
+          if (dr.top < r.bottom && dr.bottom > r.top) onDark = true;
+        });
+        toc.classList.toggle("on-dark", onDark);
+        ticking = false;
+      }
+      window.addEventListener("scroll", function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(checkDark); }
+      }, { passive: true });
+      checkDark();
+    }
   })();
 
   /* ---- Figma 스타일 방향성 스크롤 애니메이션 (data-reveal, 홈 전용) ---- */
