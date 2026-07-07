@@ -216,6 +216,44 @@
     header.insertAdjacentElement("afterend", bar);
   })();
 
+  /* ---- 스킵 링크 (키보드 사용자 본문 바로가기) ---- */
+  (function () {
+    var target = document.querySelector(".hero, .page-hero, section.section");
+    if (!target) return;
+    if (!target.id) target.id = "main-content";
+    target.setAttribute("tabindex", "-1");
+    var a = document.createElement("a");
+    a.className = "skip-link";
+    a.href = "#" + target.id;
+    a.textContent = "본문 바로가기";
+    a.addEventListener("click", function () {
+      setTimeout(function () { target.focus({ preventScroll: true }); }, 0);
+    });
+    document.body.insertBefore(a, document.body.firstChild);
+  })();
+
+  /* ---- 맨 위로 버튼 ---- */
+  (function () {
+    var btn = document.createElement("button");
+    btn.className = "back-top";
+    btn.type = "button";
+    btn.setAttribute("aria-label", "맨 위로");
+    btn.textContent = "↑";
+    btn.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    document.body.appendChild(btn);
+    var ticking = false;
+    function update() {
+      btn.classList.toggle("show", window.scrollY > 600);
+      ticking = false;
+    }
+    window.addEventListener("scroll", function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    update();
+  })();
+
   /* ---- 우측 목차 다크 섹션 색상 자동 반전 ---- */
   (function () {
     var toc = document.querySelector(".page-toc");

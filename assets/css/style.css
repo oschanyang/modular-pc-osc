@@ -92,7 +92,8 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--ink); letter-spacing: -.03em; font-size: 17px; }
 .brand:hover { text-decoration: none; }
-.brand-logo { height: 29px; width: auto; flex: none; }
+.brand-logo { height: 24px; width: auto; flex: none; }   /* 로고 아이콘: 작게 */
+.brand-text { height: 34px; width: auto; flex: none; }   /* 텍스트 로고: 크게 */
 .brand .mark {
   width: 28px; height: 28px; border-radius: 7px; flex: none;
   background: linear-gradient(135deg, var(--navy), var(--blue));
@@ -552,6 +553,27 @@ section[data-toc] { scroll-margin-top: calc(var(--nav-h) + 62px); }  /* 헤더 +
 .sub-nav .sn-links a { flex: none; font-size: 14px; color: var(--muted); padding: 6px 14px; border-radius: var(--r-pill); }
 .sub-nav .sn-links a:hover { color: var(--blue); text-decoration: none; }
 .sub-nav .sn-links a.active { background: var(--navy); color: #fff; font-weight: 700; }
+
+/* ============================ 맨 위로 버튼 ============================ */
+.back-top {
+  position: fixed; right: 26px; bottom: 26px; z-index: 80;
+  width: 46px; height: 46px; border-radius: 50%; border: 0; cursor: pointer;
+  background: var(--navy); color: #fff; font-size: 18px; line-height: 1;
+  box-shadow: 0 8px 24px rgba(0,0,0,.18);
+  opacity: 0; visibility: hidden; transform: translateY(8px);
+  transition: opacity .25s, visibility .25s, transform .25s, background .2s;
+}
+.back-top.show { opacity: 1; visibility: visible; transform: none; }
+.back-top:hover { background: var(--blue); }
+.back-top:active { transform: scale(.94); }
+
+/* ============================ 스킵 링크 (접근성) ============================ */
+.skip-link {
+  position: fixed; left: 16px; top: -52px; z-index: 200;
+  background: var(--navy); color: #fff; padding: 11px 18px; border-radius: 0 0 10px 10px;
+  font-weight: 600; font-size: 14.5px; transition: top .2s;
+}
+.skip-link:focus { top: 0; color: #fff; text-decoration: none; outline: 2px solid var(--blue-focus); }
 
 /* ============================ FOOTER ============================ */
 .site-footer { background: var(--navy); color: #aeb7ca; padding: 60px 0 36px; }
