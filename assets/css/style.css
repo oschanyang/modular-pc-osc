@@ -424,6 +424,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 .spec { width: 100%; border-collapse: collapse; }
 .spec th, .spec td { text-align: left; padding: 14px 16px; border-bottom: 1px solid var(--hairline); font-size: 15.5px; }
 .spec th { width: 160px; color: var(--navy); font-weight: 600; background: var(--parchment); }
+.section.dark .spec td { color: var(--ink); }   /* 다크 섹션 내 흰 표에서 글자 가독성 보장 */
 
 /* ============================ TABS ============================ */
 .tabs { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 36px; }
