@@ -143,7 +143,8 @@
     toc.setAttribute("aria-label", "페이지 목차");
     var label = document.createElement("p");
     label.className = "toc-label";
-    label.textContent = "목차";
+    var curPage = document.querySelector(".menu .dropdown a.active") || document.querySelector(".menu a.active");
+    label.textContent = curPage ? curPage.textContent : "목차";
     toc.appendChild(label);
     var ul = document.createElement("ul");
     Array.prototype.forEach.call(secs, function (s, i) {
@@ -173,26 +174,64 @@
       Array.prototype.forEach.call(secs, function (s) { io.observe(s); });
     }
     setActive(secs[0].id);
+  })();
 
-    // 어두운(네이비) 섹션 위를 지날 때 목차 색상 자동 반전
-    var darkSecs = document.querySelectorAll(".section.dark");
-    if (darkSecs.length) {
-      var ticking = false;
-      function checkDark() {
-        var r = toc.getBoundingClientRect();
-        var onDark = false;
-        Array.prototype.forEach.call(darkSecs, function (d) {
-          var dr = d.getBoundingClientRect();
-          if (dr.top < r.bottom && dr.bottom > r.top) onDark = true;
-        });
-        toc.classList.toggle("on-dark", onDark);
-        ticking = false;
+  /* ---- 좌측 LNB (현재 대메뉴의 하위 페이지 목차) ---- */
+  (function () {
+    var activeTop = document.querySelector(".menu > li.is-active");
+    if (!activeTop) return;                            // 홈 등 대메뉴 밖 페이지는 제외
+    var topLink = activeTop.querySelector(":scope > a");
+    var subLinks = activeTop.querySelectorAll(".dropdown a");
+    if (!topLink || !subLinks.length) return;
+
+    var lnb = document.createElement("nav");
+    lnb.className = "page-lnb";
+    lnb.setAttribute("aria-label", topLink.textContent + " 하위 메뉴");
+    var label = document.createElement("p");
+    label.className = "toc-label";
+    label.textContent = topLink.textContent;
+    lnb.appendChild(label);
+
+    var ul = document.createElement("ul");
+    var path = (location.pathname.split("/").pop() || "index.html");
+    Array.prototype.forEach.call(subLinks, function (s) {
+      var li = document.createElement("li");
+      var a = document.createElement("a");
+      a.href = s.getAttribute("href");
+      a.textContent = s.textContent;
+      if ((a.getAttribute("href") || "").split("#")[0] === path) {
+        a.classList.add("active");
+        a.setAttribute("aria-current", "page");
       }
-      window.addEventListener("scroll", function () {
-        if (!ticking) { ticking = true; requestAnimationFrame(checkDark); }
-      }, { passive: true });
-      checkDark();
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+    lnb.appendChild(ul);
+    document.body.appendChild(lnb);
+  })();
+
+  /* ---- 사이드 내비(목차·LNB) 다크 섹션 색상 자동 반전 ---- */
+  (function () {
+    var navs = document.querySelectorAll(".page-toc, .page-lnb");
+    var darks = document.querySelectorAll(".section.dark");
+    if (!navs.length || !darks.length) return;
+    var ticking = false;
+    function check() {
+      Array.prototype.forEach.call(navs, function (n) {
+        var r = n.getBoundingClientRect();
+        var on = false;
+        Array.prototype.forEach.call(darks, function (d) {
+          var dr = d.getBoundingClientRect();
+          if (dr.top < r.bottom && dr.bottom > r.top) on = true;
+        });
+        n.classList.toggle("on-dark", on);
+      });
+      ticking = false;
     }
+    window.addEventListener("scroll", function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(check); }
+    }, { passive: true });
+    check();
   })();
 
   /* ---- Figma 스타일 방향성 스크롤 애니메이션 (data-reveal, 홈 전용) ---- */
