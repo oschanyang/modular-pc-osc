@@ -176,26 +176,27 @@
     setActive(secs[0].id);
   })();
 
-  /* ---- 좌측 LNB (현재 대메뉴의 하위 페이지 목차) ---- */
+  /* ---- 서브 내비게이션 바 (헤더 아래 가로 탭 — 대메뉴 하위 페이지) ---- */
   (function () {
     var activeTop = document.querySelector(".menu > li.is-active");
     if (!activeTop) return;                            // 홈 등 대메뉴 밖 페이지는 제외
     var topLink = activeTop.querySelector(":scope > a");
     var subLinks = activeTop.querySelectorAll(".dropdown a");
-    if (!topLink || !subLinks.length) return;
+    var header = document.querySelector(".site-header");
+    if (!topLink || !subLinks.length || !header) return;
 
-    var lnb = document.createElement("nav");
-    lnb.className = "page-lnb";
-    lnb.setAttribute("aria-label", topLink.textContent + " 하위 메뉴");
-    var label = document.createElement("p");
-    label.className = "toc-label";
-    label.textContent = topLink.textContent;
-    lnb.appendChild(label);
-
-    var ul = document.createElement("ul");
+    var bar = document.createElement("div");
+    bar.className = "sub-nav";
+    var inner = document.createElement("div");
+    inner.className = "sn-inner";
+    var title = document.createElement("span");
+    title.className = "sn-title";
+    title.textContent = topLink.textContent;
+    var links = document.createElement("nav");
+    links.className = "sn-links";
+    links.setAttribute("aria-label", topLink.textContent + " 하위 메뉴");
     var path = (location.pathname.split("/").pop() || "index.html");
     Array.prototype.forEach.call(subLinks, function (s) {
-      var li = document.createElement("li");
       var a = document.createElement("a");
       a.href = s.getAttribute("href");
       a.textContent = s.textContent;
@@ -203,29 +204,28 @@
         a.classList.add("active");
         a.setAttribute("aria-current", "page");
       }
-      li.appendChild(a);
-      ul.appendChild(li);
+      links.appendChild(a);
     });
-    lnb.appendChild(ul);
-    document.body.appendChild(lnb);
+    inner.appendChild(title);
+    inner.appendChild(links);
+    bar.appendChild(inner);
+    header.insertAdjacentElement("afterend", bar);
   })();
 
-  /* ---- 사이드 내비(목차·LNB) 다크 섹션 색상 자동 반전 ---- */
+  /* ---- 우측 목차 다크 섹션 색상 자동 반전 ---- */
   (function () {
-    var navs = document.querySelectorAll(".page-toc, .page-lnb");
+    var toc = document.querySelector(".page-toc");
     var darks = document.querySelectorAll(".section.dark");
-    if (!navs.length || !darks.length) return;
+    if (!toc || !darks.length) return;
     var ticking = false;
     function check() {
-      Array.prototype.forEach.call(navs, function (n) {
-        var r = n.getBoundingClientRect();
-        var on = false;
-        Array.prototype.forEach.call(darks, function (d) {
-          var dr = d.getBoundingClientRect();
-          if (dr.top < r.bottom && dr.bottom > r.top) on = true;
-        });
-        n.classList.toggle("on-dark", on);
+      var r = toc.getBoundingClientRect();
+      var on = false;
+      Array.prototype.forEach.call(darks, function (d) {
+        var dr = d.getBoundingClientRect();
+        if (dr.top < r.bottom && dr.bottom > r.top) on = true;
       });
+      toc.classList.toggle("on-dark", on);
       ticking = false;
     }
     window.addEventListener("scroll", function () {
