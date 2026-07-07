@@ -92,7 +92,7 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--ink); letter-spacing: -.03em; font-size: 17px; }
 .brand:hover { text-decoration: none; }
-.brand-logo { height: 40px; width: auto; flex: none; }
+.brand-logo { height: 29px; width: auto; flex: none; }
 .brand .mark {
   width: 28px; height: 28px; border-radius: 7px; flex: none;
   background: linear-gradient(135deg, var(--navy), var(--blue));
