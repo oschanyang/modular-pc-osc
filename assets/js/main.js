@@ -134,6 +134,43 @@
     els.forEach(function (el) { io.observe(el); });
   })();
 
+  /* ---- 상세페이지 사이드 목차(TOC) + 스크롤스파이 ---- */
+  (function () {
+    var secs = document.querySelectorAll("section[data-toc]");
+    if (secs.length < 2) return;                       // 섹션 2개 미만이면 목차 불필요
+    var toc = document.createElement("nav");
+    toc.className = "page-toc";
+    toc.setAttribute("aria-label", "페이지 목차");
+    var ul = document.createElement("ul");
+    Array.prototype.forEach.call(secs, function (s, i) {
+      if (!s.id) s.id = "sec-" + (i + 1);
+      var li = document.createElement("li");
+      var a = document.createElement("a");
+      a.href = "#" + s.id;
+      a.textContent = s.getAttribute("data-toc");
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+    toc.appendChild(ul);
+    document.body.appendChild(toc);
+
+    var links = toc.querySelectorAll("a");
+    function setActive(id) {
+      Array.prototype.forEach.call(links, function (a) {
+        a.classList.toggle("active", a.getAttribute("href") === "#" + id);
+      });
+    }
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) setActive(e.target.id);
+        });
+      }, { rootMargin: "-40% 0px -55% 0px", threshold: 0 });
+      Array.prototype.forEach.call(secs, function (s) { io.observe(s); });
+    }
+    setActive(secs[0].id);
+  })();
+
   /* ---- Figma 스타일 방향성 스크롤 애니메이션 (data-reveal, 홈 전용) ---- */
   (function () {
     var items = document.querySelectorAll("[data-reveal]");
