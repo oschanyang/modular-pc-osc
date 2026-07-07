@@ -551,7 +551,7 @@ section[data-toc] { scroll-margin-top: calc(var(--nav-h) + 62px); }  /* 헤더 +
 .sub-nav .sn-links { display: flex; align-items: center; gap: 4px; margin-left: auto; overflow-x: auto; }
 .sub-nav .sn-links a { flex: none; font-size: 14px; color: var(--muted); padding: 6px 14px; border-radius: var(--r-pill); }
 .sub-nav .sn-links a:hover { color: var(--blue); text-decoration: none; }
-.sub-nav .sn-links a.active { background: var(--navy); color: #fff; font-weight: 600; }
+.sub-nav .sn-links a.active { background: var(--navy); color: #fff; font-weight: 700; }
 
 /* ============================ FOOTER ============================ */
 .site-footer { background: var(--navy); color: #aeb7ca; padding: 60px 0 36px; }

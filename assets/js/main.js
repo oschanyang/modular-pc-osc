@@ -59,12 +59,17 @@
   }
 
   /* ---- 현재 페이지 active 표시 ---- */
+  // 주소 형태(.html 유무, 쿼리, 해시, 트레일링 슬래시)와 무관하게 페이지 키를 뽑는다
+  function pageKey(p) {
+    p = (p || "").split("#")[0].split("?")[0];
+    if (p.slice(-1) === "/") p = p.slice(0, -1);
+    p = p.split("/").pop().replace(/\.html$/, "");
+    return p === "" ? "index" : p;
+  }
+  var currentKey = pageKey(location.pathname);
   if (menu) {
-    var path = (location.pathname.split("/").pop() || "index.html");
-    if (path === "") path = "index.html";
     menu.querySelectorAll("a[href]").forEach(function (a) {
-      var href = (a.getAttribute("href") || "").split("/").pop().split("#")[0];
-      if (href && href === path) {
+      if (pageKey(a.getAttribute("href")) === currentKey) {
         a.classList.add("active");
         a.setAttribute("aria-current", "page");
         var topLi = a.closest(".menu > li");
@@ -195,12 +200,11 @@
     var links = document.createElement("nav");
     links.className = "sn-links";
     links.setAttribute("aria-label", topLink.textContent + " 하위 메뉴");
-    var path = (location.pathname.split("/").pop() || "index.html");
     Array.prototype.forEach.call(subLinks, function (s) {
       var a = document.createElement("a");
       a.href = s.getAttribute("href");
       a.textContent = s.textContent;
-      if ((a.getAttribute("href") || "").split("#")[0] === path) {
+      if (pageKey(a.getAttribute("href")) === currentKey) {
         a.classList.add("active");
         a.setAttribute("aria-current", "page");
       }
