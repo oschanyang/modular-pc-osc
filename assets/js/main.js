@@ -80,8 +80,9 @@
 
   /* ---- 탭 ---- */
   document.querySelectorAll("[data-tabs]").forEach(function (group) {
-    var tabs = group.querySelectorAll(".tab");
-    var panels = group.querySelectorAll(".tab-panel");
+    // :scope 직계 기준으로 선택해 탭 안에 탭(중첩)이 있어도 서로 간섭하지 않게 한다
+    var tabs = group.querySelectorAll(":scope > .tabs .tab");
+    var panels = group.querySelectorAll(":scope > .tab-panel");
     tabs.forEach(function (tab) {
       tab.addEventListener("click", function () {
         var target = tab.getAttribute("data-tab");
@@ -93,8 +94,78 @@
     });
   });
 
-  /* ---- 이미지 확대(라이트박스) 기능 비활성화 ----
-     사이트 내 모든 이미지는 클릭해도 아무 반응이 없도록 처리합니다. */
+  /* ---- URL 해시 진입 시 대상이 탭 안이면 해당 탭 활성화 후 이동 ---- */
+  (function () {
+    if (!location.hash) return;
+    var t;
+    try { t = document.querySelector(location.hash); } catch (e) { return; }
+    if (!t) return;
+    var panel = t.closest(".tab-panel");
+    if (panel && !panel.classList.contains("active")) {
+      var group = panel.closest("[data-tabs]");
+      var btn = group && group.querySelector(':scope > .tabs .tab[data-tab="' + panel.getAttribute("data-panel") + '"]');
+      if (btn) btn.click();
+      setTimeout(function () { t.scrollIntoView(); }, 60);
+    }
+  })();
+
+  /* ---- 수행계획 슬라이드(.slide-fig) 한정 확대 보기 ----
+     UX 조사 권고에 따라 밀도 높은 계획 슬라이드만 클릭 시 원본 확대. 그 외 이미지는 계속 무반응. */
+  (function () {
+    var figs = document.querySelectorAll(".slide-fig img");
+    if (!figs.length) return;
+    var box = document.createElement("div");
+    box.className = "slidebox";
+    box.innerHTML =
+      '<button class="sb-close" aria-label="닫기">&times;</button>' +
+      '<button class="sb-prev" aria-label="이전 슬라이드">&#8249;</button>' +
+      '<img alt="">' +
+      '<button class="sb-next" aria-label="다음 슬라이드">&#8250;</button>' +
+      '<div class="sb-cap"></div>';
+    document.body.appendChild(box);
+    var big = box.querySelector("img");
+    var cap = box.querySelector(".sb-cap");
+    var list = [], idx = 0;
+
+    function visibleFigs() {
+      return Array.prototype.filter.call(figs, function (f) { return f.offsetParent !== null; });
+    }
+    function show(i) {
+      if (!list.length) return;
+      idx = (i + list.length) % list.length;
+      big.src = list[idx].src;
+      big.alt = list[idx].alt;
+      cap.textContent = list[idx].alt + "  (" + (idx + 1) + " / " + list.length + ")";
+    }
+    function open(f) {
+      list = visibleFigs();
+      show(list.indexOf(f));
+      box.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+    function close() {
+      box.classList.remove("open");
+      document.body.style.overflow = "";
+      big.src = "";
+    }
+    Array.prototype.forEach.call(figs, function (f) {
+      var fig = f.closest(".slide-fig");
+      if (fig) fig.addEventListener("click", function () { open(f); });
+    });
+    box.addEventListener("click", function (e) { if (e.target === box) close(); });
+    box.querySelector(".sb-close").addEventListener("click", close);
+    box.querySelector(".sb-prev").addEventListener("click", function () { show(idx - 1); });
+    box.querySelector(".sb-next").addEventListener("click", function () { show(idx + 1); });
+    document.addEventListener("keydown", function (e) {
+      if (!box.classList.contains("open")) return;
+      if (e.key === "Escape") close();
+      if (e.key === "ArrowLeft") show(idx - 1);
+      if (e.key === "ArrowRight") show(idx + 1);
+    });
+  })();
+
+  /* ---- 그 외 이미지 확대 기능 비활성화 ----
+     사이트 내 다른 이미지는 클릭해도 아무 반응이 없도록 유지합니다. */
 
   /* ---- 스크롤 진입 애니메이션 ---- */
   (function () {
@@ -139,10 +210,37 @@
     els.forEach(function (el) { io.observe(el); });
   })();
 
-  /* ---- 상세페이지 사이드 목차(TOC) + 스크롤스파이 ---- */
+  /* ---- 하위분야 앵커 바 스크롤스파이 (연구수행계획) ---- */
+  (function () {
+    var groups = document.querySelectorAll(".sf-anchors");
+    if (!groups.length || !("IntersectionObserver" in window)) return;
+    Array.prototype.forEach.call(groups, function (group) {
+      var links = group.querySelectorAll('a[href^="#"]');
+      var sections = [];
+      Array.prototype.forEach.call(links, function (a) {
+        var s = document.querySelector(a.getAttribute("href"));
+        if (s) sections.push(s);
+      });
+      if (!sections.length) return;
+      function setActive(id) {
+        Array.prototype.forEach.call(links, function (a) {
+          a.classList.toggle("active", a.getAttribute("href") === "#" + id);
+        });
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) setActive(e.target.id);
+        });
+      }, { rootMargin: "-30% 0px -60% 0px", threshold: 0 });
+      sections.forEach(function (s) { io.observe(s); });
+      setActive(sections[0].id);
+    });
+  })();
+
+  /* ---- 상세페이지 사이드 목차(TOC) + 스크롤스파이 (하위분야까지 세밀 목차) ---- */
   (function () {
     var secs = document.querySelectorAll("section[data-toc]");
-    if (secs.length < 2) return;                       // 섹션 2개 미만이면 목차 불필요
+    if (!secs.length) return;
     var toc = document.createElement("nav");
     toc.className = "page-toc";
     toc.setAttribute("aria-label", "페이지 목차");
@@ -152,22 +250,83 @@
     label.textContent = curPage ? curPage.textContent : "목차";
     toc.appendChild(label);
     var ul = document.createElement("ul");
-    Array.prototype.forEach.call(secs, function (s, i) {
-      if (!s.id) s.id = "sec-" + (i + 1);
+
+    function goScroll(t) {
+      requestAnimationFrame(function () { t.scrollIntoView({ behavior: "smooth" }); });
+    }
+    function addItem(text, cls, onClick) {
       var li = document.createElement("li");
       var a = document.createElement("a");
-      a.href = "#" + s.id;
-      a.textContent = s.getAttribute("data-toc");
+      a.href = "#";
+      a.textContent = text;
+      if (cls) a.className = cls;
+      a.addEventListener("click", function (e) { e.preventDefault(); onClick(); });
       li.appendChild(a);
       ul.appendChild(li);
+      return { li: li, a: a };
+    }
+
+    var spyTargets = [];   // 스크롤스파이 대상 (섹션 + 하위분야)
+    var midItems = [];     // 세부(탭) 항목 — 활성 탭만 강조
+    var subItems = [];     // 하위분야 항목 — 활성 세부만 펼침(아코디언)
+
+    function updateExpand() {
+      midItems.forEach(function (m) { m.a.classList.toggle("on", m.panel.classList.contains("active")); });
+      subItems.forEach(function (si) { si.li.style.display = si.panel.classList.contains("active") ? "" : "none"; });
+    }
+
+    Array.prototype.forEach.call(secs, function (s, i) {
+      if (!s.id) s.id = "sec-" + (i + 1);
+      var group = s.querySelector("[data-tabs]");
+      if (!group) {
+        var top = addItem(s.getAttribute("data-toc"), "", function () { goScroll(s); });
+        top.a.setAttribute("data-spy", s.id);
+        spyTargets.push(s);
+        return;
+      }
+      // 탭 그룹 섹션: 우산 항목 없이 세부(탭)들을 최상위 목차 항목으로 표시
+      var panels = group.querySelectorAll(":scope > .tab-panel");
+      Array.prototype.forEach.call(panels, function (panel) {
+        var key = panel.getAttribute("data-panel");
+        var btn = group.querySelector(':scope > .tabs .tab[data-tab="' + key + '"]');
+        if (!btn) return;
+        var midLabel = (btn.textContent.split("·")[0] || btn.textContent).trim();
+        var mid = addItem(midLabel, "tabtop", function () {
+          if (!panel.classList.contains("active")) btn.click();
+          updateExpand();
+          goScroll(s);
+        });
+        midItems.push({ a: mid.a, panel: panel });
+        btn.addEventListener("click", function () { setTimeout(updateExpand, 0); });
+
+        var sfs = panel.querySelectorAll(".sf-section");
+        if (sfs.length < 2) return;              // 하위분야가 1개뿐이면 세부 항목만
+        Array.prototype.forEach.call(sfs, function (sf, j) {
+          if (!sf.id) sf.id = key + "-sf" + (j + 1);
+          var head = sf.querySelector(".subpart-head");
+          var badge = head && head.querySelector(".badge");
+          var h3 = head && head.querySelector("h3");
+          var text = (badge ? badge.textContent + " " : "") + (h3 ? h3.textContent : sf.id);
+          var sub = addItem(text, "sub", function () {
+            if (!panel.classList.contains("active")) btn.click();
+            updateExpand();
+            goScroll(sf);
+          });
+          sub.a.setAttribute("data-spy", sf.id);
+          subItems.push({ li: sub.li, panel: panel });
+          spyTargets.push(sf);
+        });
+      });
     });
+    if (ul.children.length < 2) return;              // 항목 2개 미만이면 목차 불필요
     toc.appendChild(ul);
     document.body.appendChild(toc);
+    updateExpand();
 
-    var links = toc.querySelectorAll("a");
+    var spyLinks = toc.querySelectorAll("a[data-spy]");
     function setActive(id) {
-      Array.prototype.forEach.call(links, function (a) {
-        a.classList.toggle("active", a.getAttribute("href") === "#" + id);
+      Array.prototype.forEach.call(spyLinks, function (a) {
+        a.classList.toggle("active", a.getAttribute("data-spy") === id);
       });
     }
     if ("IntersectionObserver" in window) {
@@ -176,9 +335,9 @@
           if (e.isIntersecting) setActive(e.target.id);
         });
       }, { rootMargin: "-40% 0px -55% 0px", threshold: 0 });
-      Array.prototype.forEach.call(secs, function (s) { io.observe(s); });
+      spyTargets.forEach(function (t) { io.observe(t); });
     }
-    setActive(secs[0].id);
+    if (spyTargets.length) setActive(spyTargets[0].id);
   })();
 
   /* ---- 서브 내비게이션 바 (헤더 아래 가로 탭 — 대메뉴 하위 페이지) ---- */
@@ -252,28 +411,6 @@
       if (!ticking) { ticking = true; requestAnimationFrame(update); }
     }, { passive: true });
     update();
-  })();
-
-  /* ---- 우측 목차 다크 섹션 색상 자동 반전 ---- */
-  (function () {
-    var toc = document.querySelector(".page-toc");
-    var darks = document.querySelectorAll(".section.dark");
-    if (!toc || !darks.length) return;
-    var ticking = false;
-    function check() {
-      var r = toc.getBoundingClientRect();
-      var on = false;
-      Array.prototype.forEach.call(darks, function (d) {
-        var dr = d.getBoundingClientRect();
-        if (dr.top < r.bottom && dr.bottom > r.top) on = true;
-      });
-      toc.classList.toggle("on-dark", on);
-      ticking = false;
-    }
-    window.addEventListener("scroll", function () {
-      if (!ticking) { ticking = true; requestAnimationFrame(check); }
-    }, { passive: true });
-    check();
   })();
 
   /* ---- Figma 스타일 방향성 스크롤 애니메이션 (data-reveal, 홈 전용) ---- */
