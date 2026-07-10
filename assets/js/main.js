@@ -94,19 +94,72 @@
     });
   });
 
-  /* ---- URL 해시 진입 시 대상이 탭 안이면 해당 탭 활성화 후 이동 ---- */
+  /* ---- 탭 체인 활성화: 대상이 중첩 탭 안에 있어도 바깥→안쪽 순서로 모두 켠다 ---- */
+  function activateTabChain(el) {
+    var clicked = false;
+    var chain = [];
+    var panel = el.closest(".tab-panel");
+    while (panel) {
+      chain.unshift(panel);
+      panel = panel.parentElement && panel.parentElement.closest(".tab-panel");
+    }
+    chain.forEach(function (p) {
+      if (!p.classList.contains("active")) {
+        var group = p.closest("[data-tabs]");
+        var btn = group && group.querySelector(':scope > .tabs .tab[data-tab="' + p.getAttribute("data-panel") + '"]');
+        if (btn) { btn.click(); clicked = true; }
+      }
+    });
+    return clicked;
+  }
+
+  /* ---- URL 해시 진입 시 대상이 탭 안이면 해당 탭(중첩 포함) 활성화 후 이동 ---- */
   (function () {
     if (!location.hash) return;
     var t;
     try { t = document.querySelector(location.hash); } catch (e) { return; }
     if (!t) return;
-    var panel = t.closest(".tab-panel");
-    if (panel && !panel.classList.contains("active")) {
-      var group = panel.closest("[data-tabs]");
-      var btn = group && group.querySelector(':scope > .tabs .tab[data-tab="' + panel.getAttribute("data-panel") + '"]');
-      if (btn) btn.click();
-      setTimeout(function () { t.scrollIntoView(); }, 60);
-    }
+    if (activateTabChain(t)) setTimeout(function () { t.scrollIntoView(); }, 60);
+  })();
+
+  /* ---- 게시판 목록 렌더링: 페이지별 JSON (공지 notices.json · 보도자료 press.json · 행사 events.json) ----
+     .board[data-src="assets/data/xxx.json"] — Decap CMS(/admin/)가 각 파일을 관리 */
+  (function () {
+    var boards = document.querySelectorAll(".board[data-src]");
+    if (!boards.length) return;
+    function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]; }); }
+    boards.forEach(function (board) {
+      fetch(board.getAttribute("data-src"), { cache: "no-store" })
+        .then(function (r) { return r.ok ? r.json() : {}; })
+        .then(function (d) {
+          var items = (d && (d.items || d.notices) || []).slice();
+          if (!items.length) return;                       // 비어 있으면 안내문구 유지
+          items.sort(function (a, b) { return String(b.date || "").localeCompare(String(a.date || "")); });
+          var emptyEl = board.querySelector(".empty-state");
+          if (emptyEl) emptyEl.style.display = "none";
+          var total = items.length;
+          items.forEach(function (it, i) {
+            var link = it.link && String(it.link).trim();
+            var file = it.file && String(it.file).trim();
+            var row = document.createElement(link || file ? "a" : "div");
+            row.className = "row";
+            if (link) { row.href = link; row.target = "_blank"; row.rel = "noopener"; }
+            else if (file) { row.href = file; row.setAttribute("download", ""); }
+            var cat = (it.category && !board.hasAttribute("data-nocat")) ? '<span class="cat">' + esc(it.category) + "</span>" : "";
+            var tail = link ? ' <span style="color:var(--blue);font-size:13px;font-weight:600">바로가기 ↗</span>'
+                     : file ? ' <span style="color:var(--blue);font-size:13px;font-weight:600">첨부 ⬇</span>' : "";
+            var body = it.body && String(it.body).trim() ? '<span class="bdesc">' + esc(it.body) + "</span>" : "";
+            var thumb = it.thumb && String(it.thumb).trim() ? '<img class="thumb" src="' + esc(it.thumb) + '" alt="" loading="lazy" decoding="async">' : "";
+            if (thumb) row.classList.add("has-thumb");
+            row.innerHTML =
+              '<span class="no">' + (total - i) + "</span>" + thumb +
+              '<span class="ttl">' + cat + esc(it.title || "") + tail + body + "</span>" +
+              '<span class="date">' + esc(it.date || "") + "</span>";
+            if (emptyEl) board.insertBefore(row, emptyEl); else board.appendChild(row);
+          });
+        })
+        .catch(function () { /* 로컬(file://) 등 fetch 불가 시 안내문구 유지 */ });
+    });
   })();
 
   /* ---- 수행계획 슬라이드(.slide-fig) 한정 확대 보기 ----
@@ -133,6 +186,7 @@
     function show(i) {
       if (!list.length) return;
       idx = (i + list.length) % list.length;
+      box.classList.remove("zoomed");             // 슬라이드 전환 시 줌 해제
       big.src = list[idx].src;
       big.alt = list[idx].alt;
       cap.textContent = list[idx].alt + "  (" + (idx + 1) + " / " + list.length + ")";
@@ -145,9 +199,24 @@
     }
     function close() {
       box.classList.remove("open");
+      box.classList.remove("zoomed");
       document.body.style.overflow = "";
       big.src = "";
     }
+
+    /* 2단계 줌: 확대 보기 안에서 이미지를 클릭하면 원본 해상도로 확대하고
+       클릭한 지점이 화면 중앙에 오도록 스크롤. 다시 클릭하면 화면맞춤으로 복귀 */
+    big.addEventListener("click", function (e) {
+      var rx = big.clientWidth ? (e.offsetX / big.clientWidth) : 0.5;
+      var ry = big.clientHeight ? (e.offsetY / big.clientHeight) : 0.5;
+      var zoomed = box.classList.toggle("zoomed");
+      if (zoomed) {
+        requestAnimationFrame(function () {
+          box.scrollLeft = big.clientWidth * rx - box.clientWidth / 2;
+          box.scrollTop = big.clientHeight * ry - box.clientHeight / 2;
+        });
+      }
+    });
     Array.prototype.forEach.call(figs, function (f) {
       var fig = f.closest(".slide-fig");
       if (fig) fig.addEventListener("click", function () { open(f); });
@@ -297,7 +366,14 @@
           goScroll(s);
         });
         midItems.push({ a: mid.a, panel: panel });
-        btn.addEventListener("click", function () { setTimeout(updateExpand, 0); });
+        btn.addEventListener("click", function () {
+          setTimeout(function () {
+            updateExpand();
+            // 세부 탭 전환 시 목차 활성 표시를 현재 보이는 하위분야로 즉시 동기화
+            var cur = panel.querySelector(".sf-section.tab-panel.active") || panel.querySelector(".sf-section");
+            if (cur && cur.id) setActive(cur.id);
+          }, 0);
+        });
 
         var sfs = panel.querySelectorAll(".sf-section");
         if (sfs.length < 2) return;              // 하위분야가 1개뿐이면 세부 항목만
@@ -309,12 +385,19 @@
           var text = (badge ? badge.textContent + " " : "") + (h3 ? h3.textContent : sf.id);
           var sub = addItem(text, "sub", function () {
             if (!panel.classList.contains("active")) btn.click();
+            activateTabChain(sf);              // 하위분야가 중첩 탭 패널이면 해당 서브탭까지 활성화
             updateExpand();
             goScroll(sf);
           });
           sub.a.setAttribute("data-spy", sf.id);
           subItems.push({ li: sub.li, panel: panel });
           spyTargets.push(sf);
+          // 하위분야가 중첩 서브탭 패널이면 서브탭 클릭 즉시 목차 활성 표시 동기화
+          if (sf.classList.contains("tab-panel")) {
+            var sfGroup = sf.closest("[data-tabs]");
+            var sfBtn = sfGroup && sfGroup.querySelector(':scope > .tabs .tab[data-tab="' + sf.getAttribute("data-panel") + '"]');
+            if (sfBtn) sfBtn.addEventListener("click", function () { setActive(sf.id); });
+          }
         });
       });
     });

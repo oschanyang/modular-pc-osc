@@ -14,14 +14,14 @@ display_url: "/"
 
 collections:
   - name: "resources"
-    label: "자료실"
-    description: "공지사항 및 자료 관리"
+    label: "자료실 · 공지사항"
+    description: "자료실(공지사항) 게시글 관리"
     files:
       - name: "notices"
         label: "공지사항 목록"
         file: "assets/data/notices.json"
         format: "json"
-        description: "공지/자료 목록. '추가' 버튼으로 새 항목을 등록하세요."
+        description: "공지/자료 목록. '공지 추가' 버튼으로 새 항목을 등록하세요."
         fields:
           - label: "공지 목록"
             name: "notices"
@@ -33,8 +33,64 @@ collections:
               - label: "분류"
                 name: "category"
                 widget: "select"
-                options: ["공지", "자료", "행사", "보도자료"]
+                options: ["공지", "자료"]
                 default: "공지"
               - { label: "날짜", name: "date", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
               - { label: "첨부파일", name: "file", widget: "file", required: false, hint: "PDF, HWP, ZIP 등 (선택)" }
+              - { label: "링크(선택)", name: "link", widget: "string", required: false, hint: "외부 URL — 입력 시 첨부파일보다 우선 연결됩니다" }
+              - { label: "내용(선택)", name: "body", widget: "text", required: false }
+
+  - name: "press"
+    label: "소식 · 언론보도"
+    description: "언론 보도 기사 관리"
+    files:
+      - name: "press"
+        label: "언론보도 목록"
+        file: "assets/data/press.json"
+        format: "json"
+        description: "언론보도 목록. 기사 URL을 '링크'에 넣고, 요약문과 썸네일을 함께 등록하세요."
+        fields:
+          - label: "언론보도 목록"
+            name: "items"
+            widget: "list"
+            label_singular: "언론보도"
+            summary: "{{fields.date}} · {{fields.title}}"
+            fields:
+              - { label: "제목", name: "title", widget: "string" }
+              - label: "구분"
+                name: "category"
+                widget: "select"
+                options: ["언론보도", "보도자료"]
+                default: "언론보도"
+              - { label: "날짜", name: "date", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
+              - { label: "링크(기사 URL)", name: "link", widget: "string", required: false, hint: "언론 기사 URL — 입력 시 '바로가기'로 연결됩니다" }
+              - { label: "썸네일 이미지", name: "thumb", widget: "image", required: false, media_folder: "/assets/images/press", public_folder: "assets/images/press", hint: "목록에 표시될 대표 이미지 (선택)" }
+              - { label: "요약(내용)", name: "body", widget: "text", required: false, hint: "목록에 제목 아래 표시되는 2~3문장 요약" }
+              - { label: "첨부파일", name: "file", widget: "file", required: false, hint: "보도자료 원문 PDF 등 (선택)" }
+
+  - name: "events"
+    label: "소식 · 행사"
+    description: "세미나, 워크숍, 학술행사 소식 관리"
+    files:
+      - name: "events"
+        label: "행사 목록"
+        file: "assets/data/events.json"
+        format: "json"
+        description: "행사 목록. '행사 추가' 버튼으로 새 항목을 등록하세요."
+        fields:
+          - label: "행사 목록"
+            name: "items"
+            widget: "list"
+            label_singular: "행사"
+            summary: "{{fields.date}} · {{fields.category}} · {{fields.title}}"
+            fields:
+              - { label: "제목", name: "title", widget: "string" }
+              - label: "구분"
+                name: "category"
+                widget: "select"
+                options: ["세미나", "워크숍", "학술행사", "기타"]
+                default: "세미나"
+              - { label: "날짜", name: "date", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
+              - { label: "첨부파일", name: "file", widget: "file", required: false, hint: "행사 안내문 등 (선택)" }
+              - { label: "링크(선택)", name: "link", widget: "string", required: false, hint: "행사 안내 페이지 등 외부 URL (선택)" }
               - { label: "내용(선택)", name: "body", widget: "text", required: false }
