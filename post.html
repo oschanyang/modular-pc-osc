@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>게시글 | 모듈형 PC 공동주택 연구단</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="assets/css/style.css?v=45">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a class="brand" href="index.html"><img src="assets/images/brand-icon.png" class="brand-logo" alt=""><img src="assets/images/brand-text.png?v=3" class="brand-text" alt="모듈형 PC 공동주택 연구단"></a>
+    <ul class="menu">
+      <li><a href="about-intro.html">연구단소개</a>
+        <div class="dropdown">
+          <a href="about-intro.html">연구단 구성</a>
+          <a href="about-goal.html">연구목표</a>
+          <a href="about-method.html">모듈형 PC 공법 소개</a>
+        </div></li>
+      <li><a href="research-plan.html">연구활동</a>
+        <div class="dropdown">
+          <a href="research-plan.html">연구수행계획</a>
+          <a href="research-results.html">연구성과</a>
+        </div></li>
+      <li><a href="news-events.html">소식</a>
+        <div class="dropdown">
+          <a href="news-events.html">행사</a>
+          <a href="news-press.html">언론보도</a>
+        </div></li>
+      <li class="no-caret"><a href="resources-notice.html">자료실</a></li>
+    </ul>
+    <button class="nav-toggle" aria-label="메뉴 열기"><span></span></button>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="container">
+    <p class="crumb"><a href="index.html">홈</a> · <a id="crumb-board" href="resources-notice.html" style="color:inherit">자료실</a></p>
+    <h1 id="hero-title">게시글</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container" style="max-width:900px">
+    <article class="card" id="post" style="padding:38px 42px">
+      <p id="post-meta" class="num" style="letter-spacing:0"></p>
+      <h2 id="post-title" style="font-size:24px;line-height:1.4;margin:10px 0 0;word-break:keep-all"></h2>
+      <div style="border-top:1px solid var(--divider-soft);margin:24px 0"></div>
+      <div id="post-body" style="font-size:15.5px;line-height:1.85;color:#333;word-break:keep-all"></div>
+      <div id="post-thumb-wrap" style="display:none;margin-top:26px"><img id="post-thumb" alt="" style="max-width:480px;width:100%;border:1px solid var(--hairline);border-radius:var(--r-sm)"></div>
+      <div id="post-file" style="display:none;margin-top:28px;background:#f6f7f9;border:1px solid var(--hairline);border-radius:var(--r-sm);padding:18px 20px">
+        <p style="margin:0 0 10px;font-size:13px;font-weight:700;color:var(--muted)">첨부파일</p>
+        <p style="margin:0;font-size:14.5px">📎 <a id="file-dl" download style="color:var(--blue);font-weight:600"><span id="file-name"></span></a><span id="file-size" style="color:var(--muted)"></span></p>
+      </div>
+      <div id="post-link" style="display:none;margin-top:22px">
+        <a id="link-btn" class="btn btn-primary" target="_blank" rel="noreferrer noopener">기사 원문 보기 ↗</a>
+      </div>
+      <div style="border-top:1px solid var(--divider-soft);margin:30px 0 0"></div>
+      <!-- 이전글 / 다음글 -->
+      <div id="pn-nav" style="display:none">
+        <a id="pn-next" class="pn-row" style="display:none"><span class="pn-label">다음글 ↑</span><span class="pn-title"></span></a>
+        <a id="pn-prev" class="pn-row" style="display:none"><span class="pn-label">이전글 ↓</span><span class="pn-title"></span></a>
+      </div>
+      <div style="margin-top:24px">
+        <a id="back-btn" class="btn btn-outline" href="resources-notice.html">목록으로</a>
+      </div>
+    </article>
+
+    <!-- 최근 게시글 -->
+    <div id="recent-wrap" style="display:none;margin-top:34px">
+      <h3 style="font-size:17px;margin-bottom:12px">이 게시판의 다른 글</h3>
+      <div class="board" id="recent-list" style="background:#fff;border-radius:var(--r-sm)"></div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container wide">
+    <div class="footer-grid">
+      <div class="f-brand">모듈형 PC 공동주택 연구단
+        <p>PC 공동주택의 고성능·고층화·표준화 핵심기술 개발 및 실증<br>주관연구개발기관 : 한양대학교 ERICA 산학협력단 · 연구책임자 : 안용한<br>연구기간 : 2025.04.10 ~ 2029.12.31 · 총 연구개발비 : 약 298억 원<br>실증 발주 : 경기주택도시공사 · 실증사업자 : 동부건설 · 제작 : NRB<br><br>한양대학교 ERICA캠퍼스 제2공학관 527호<br>TEL. 031-436-8182 · <a href="mailto:osc.hanyang@gmail.com" style="color:#9cc3ff">osc.hanyang@gmail.com</a></p></div>
+      <div class="f-links"><h4>연구단소개</h4>
+        <a href="about-intro.html">연구단 구성</a><a href="about-goal.html">연구목표</a><a href="about-method.html">모듈형 PC 공법 소개</a></div>
+      <div class="f-links"><h4>연구활동 · 소식</h4>
+        <a href="research-plan.html">연구수행계획</a><a href="research-results.html">연구성과</a>
+        <a href="news-events.html">행사 · 언론보도</a><a href="resources-notice.html">자료실</a></div>
+      <div class="f-links"><h4>관련사이트</h4>
+        <a href="https://www.molit.go.kr" target="_blank" rel="noopener">국토교통부</a><a href="https://www.kaia.re.kr" target="_blank" rel="noopener">국토교통과학기술진흥원</a>
+        <a href="http://ericaresearch.hanyang.ac.kr/" target="_blank" rel="noopener">한양대학교 ERICA</a><a href="https://www.gh.or.kr" target="_blank" rel="noopener">경기주택도시공사</a></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 모듈형 PC 공동주택 연구단</span>
+      <span>총 연구기간 2025.04.10 ~ 2029.12.31</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js?v=24"></script>
+<script>
+/* 게시글 상세 렌더링 — ?b=notices|press|events & i=원본배열인덱스 */
+(function () {
+  var BOARDS = {
+    notices: { src: "assets/data/notices.json", name: "자료실", back: "resources-notice.html" },
+    press:   { src: "assets/data/press.json",   name: "언론보도", back: "news-press.html" },
+    events:  { src: "assets/data/events.json",  name: "행사",    back: "news-events.html" }
+  };
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]; }); }
+  var q = new URLSearchParams(location.search);
+  var conf = BOARDS[q.get("b")] || BOARDS.notices;
+  var idx = parseInt(q.get("i"), 10);
+
+  document.getElementById("crumb-board").textContent = conf.name;
+  document.getElementById("crumb-board").href = conf.back;
+  document.getElementById("hero-title").textContent = conf.name;
+  document.getElementById("back-btn").href = conf.back;
+  document.title = conf.name + " | 모듈형 PC 공동주택 연구단";
+
+  fetch(conf.src, { cache: "no-store" })
+    .then(function (r) { return r.ok ? r.json() : {}; })
+    .then(function (d) {
+      var items = (d && (d.items || d.notices)) || [];
+      var it = items[idx];
+      if (!it) {
+        document.getElementById("post-title").textContent = "게시글을 찾을 수 없습니다.";
+        return;
+      }
+      var author = (it.author && String(it.author).trim()) || "관리자";
+      document.getElementById("post-meta").textContent =
+        (it.category ? it.category + " · " : "") + "작성자 " + author + " · 작성일 " + (it.date || "-");
+      document.getElementById("post-title").textContent = it.title || "";
+      document.title = (it.title || conf.name) + " | 모듈형 PC 공동주택 연구단";
+      if (it.body && String(it.body).trim()) {
+        document.getElementById("post-body").innerHTML = esc(it.body).replace(/\n/g, "<br>");
+      } else {
+        document.getElementById("post-body").innerHTML = '<span style="color:var(--muted)">본문 내용이 없는 게시글입니다.</span>';
+      }
+      if (it.thumb && String(it.thumb).trim()) {
+        document.getElementById("post-thumb").src = it.thumb;
+        document.getElementById("post-thumb-wrap").style.display = "block";
+      }
+      var file = it.file && String(it.file).trim();
+      if (file) {
+        var fname = decodeURIComponent(file.split("/").pop().split("?")[0]);
+        document.getElementById("file-name").textContent = fname;
+        document.getElementById("file-dl").href = file;
+        document.getElementById("post-file").style.display = "block";
+        fetch(file, { method: "HEAD" }).then(function (r) {
+          var b = parseInt(r.headers.get("Content-Length") || "0", 10);
+          if (b) document.getElementById("file-size").textContent = " · " + (b >= 1048576 ? (b / 1048576).toFixed(1) + "MB" : Math.max(1, Math.round(b / 1024)) + "KB");
+        }).catch(function () {});
+      }
+      var link = it.link && String(it.link).trim();
+      if (link) {
+        document.getElementById("link-btn").href = link;
+        document.getElementById("post-link").style.display = "block";
+      }
+
+      /* ---- 이전글/다음글 + 이 게시판의 다른 글 (등록일 최신순 기준) ---- */
+      var sorted = items.map(function (x, oi) { return { it: x, oi: oi }; })
+        .sort(function (a, b) { return String(b.it.date || "").localeCompare(String(a.it.date || "")); });
+      var pos = -1;
+      sorted.forEach(function (x, si) { if (x.oi === idx) pos = si; });
+      var newer = pos > 0 ? sorted[pos - 1] : null;             // 다음글(더 최신)
+      var older = pos > -1 && pos < sorted.length - 1 ? sorted[pos + 1] : null; // 이전글(더 과거)
+      function setPn(id, entry) {
+        var el = document.getElementById(id);
+        if (!entry) return;
+        el.querySelector(".pn-title").textContent = entry.it.title || "";
+        el.href = "post.html?b=" + encodeURIComponent(q.get("b") || "notices") + "&i=" + entry.oi;
+        el.style.display = "flex";
+      }
+      if (newer || older) {
+        document.getElementById("pn-nav").style.display = "block";
+        setPn("pn-next", newer);
+        setPn("pn-prev", older);
+      }
+      var others = sorted.filter(function (x) { return x.oi !== idx; }).slice(0, 5);
+      if (others.length) {
+        var listEl = document.getElementById("recent-list");
+        others.forEach(function (x) {
+          var a = document.createElement("a");
+          a.className = "row";
+          a.href = "post.html?b=" + encodeURIComponent(q.get("b") || "notices") + "&i=" + x.oi;
+          a.style.gridTemplateColumns = "1fr 110px";
+          a.innerHTML = '<span class="ttl" style="font-size:15px">' + esc(x.it.title || "") + "</span>" +
+                        '<span class="date">' + esc(x.it.date || "") + "</span>";
+          listEl.appendChild(a);
+        });
+        document.getElementById("recent-wrap").style.display = "block";
+      }
+    })
+    .catch(function () {
+      document.getElementById("post-title").textContent = "게시글을 불러오지 못했습니다.";
+    });
+})();
+</script>
+</body>
+</html>

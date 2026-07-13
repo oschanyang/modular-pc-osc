@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>모듈형 PC 공동주택 연구단</title>
 <meta name="description" content="PC 공동주택의 고효율 대량공급을 위한 고성능·고층화·표준화 기술개발 및 단지규모 실증 연구단 공식 홈페이지">
-<link rel="stylesheet" href="assets/css/style.css?v=32">
+<link rel="stylesheet" href="assets/css/style.css?v=45">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
 <meta property="og:type" content="website">
@@ -24,15 +24,15 @@
   <nav class="nav">
     <a class="brand" href="index.html">
       <img src="assets/images/brand-icon.png" class="brand-logo" alt="">
-      <img src="assets/images/brand-text.png" class="brand-text" alt="모듈형 PC 공동주택 연구단">
+      <img src="assets/images/brand-text.png?v=3" class="brand-text" alt="모듈형 PC 공동주택 연구단">
     </a>
     <ul class="menu">
       <li>
-        <a href="about-method.html">연구단소개</a>
+        <a href="about-intro.html">연구단소개</a>
         <div class="dropdown">
-          <a href="about-method.html">모듈형 PC 공법 소개</a>
           <a href="about-intro.html">연구단 구성</a>
           <a href="about-goal.html">연구목표</a>
+          <a href="about-method.html">모듈형 PC 공법 소개</a>
         </div>
       </li>
       <li>
@@ -49,11 +49,8 @@
           <a href="news-press.html">언론보도</a>
         </div>
       </li>
-      <li>
+      <li class="no-caret">
         <a href="resources-notice.html">자료실</a>
-        <div class="dropdown">
-          <a href="resources-notice.html">공지사항</a>
-        </div>
       </li>
     </ul>
     <button class="nav-toggle" aria-label="메뉴 열기"><span></span></button>
@@ -74,8 +71,10 @@
     <p class="lead">건축물을 공장에서 만들어 현장에서 조립하는 OSC 기술로<br>
        25층 이상 고층 PC 공동주택을 실현하고, 공공주택 신속공급을 이끕니다.</p>
     <div class="cta-row">
-      <a href="#intro" class="btn btn-primary">연구단 소개 보기</a>
-      <a href="#highlights" class="btn btn-ghost">목표 성과 보기</a>
+      <a href="#intro" class="btn btn-primary">핵심지표 보기</a>
+      <a href="#highlights" class="btn btn-ghost">목표성과 보기</a>
+      <a href="#demo" class="btn btn-ghost">실증단지 보기</a>
+      <a href="#consortium" class="btn btn-ghost">참여기관 보기</a>
     </div>
   </div>
 </section>
@@ -113,9 +112,9 @@
       <h2>연구단소개부터 자료실까지,<br>주요 콘텐츠를 한곳에 모았습니다</h2>
     </div>
     <div class="grid grid-4">
-      <a href="about-method.html" class="navcard nc-about" data-reveal="up" style="--d:0s">
+      <a href="about-intro.html" class="navcard nc-about" data-reveal="up" style="--d:0s">
         <h3>연구단소개</h3>
-        <p style="word-break:keep-all">모듈형 PC 공법 소개 · 연구단 구성 · 연구목표</p>
+        <p style="word-break:keep-all">연구단 구성 · 연구목표 · 모듈형 PC 공법 소개</p>
         <span class="more">자세히 →</span>
       </a>
       <a href="research-plan.html" class="navcard nc-research" data-reveal="up" style="--d:.08s">
@@ -130,7 +129,7 @@
       </a>
       <a href="resources-notice.html" class="navcard nc-resources" data-reveal="up" style="--d:.24s">
         <h3>자료실</h3>
-        <p>공지사항</p>
+        <p>공지 · 자료</p>
         <span class="more">자세히 →</span>
       </a>
     </div>
@@ -141,9 +140,9 @@
 <section class="section" id="highlights">
   <div class="container wide">
     <div class="section-head" data-reveal="up">
-      <p class="kicker">MILESTONES</p>
-      <h2>세부과제별 목표 성과는<br>하남교산 A-1BL 실증으로 이어집니다</h2>
-      <p class="section-sub">설계·구조부터 생산·실증까지, 3개 세부과제의 주요 목표 성과</p>
+      <p class="kicker">TARGET OUTCOMES</p>
+      <h2>설계 · 생산 · 실증 · 제도 각 분야에서<br>세부과제별 목표성과를 달성해 갑니다</h2>
+      <p class="section-sub">3개 세부과제의 주요 목표성과</p>
     </div>
     <div class="grid grid-3">
       <div class="card" data-reveal="pop" style="--d:0s"><span class="num">1세부 · 설계/구조/주거성능</span>
@@ -163,7 +162,7 @@
 </section>
 
 <!-- ===== 실증단지 FEATURE ===== -->
-<section class="section dark">
+<section class="section dark" id="demo">
   <div class="container">
     <div class="section-head" data-reveal="up">
       <p class="kicker" style="color:var(--blue-on-dark)">DEMONSTRATION</p>
@@ -172,6 +171,11 @@
         고층 PC 공동주택 구현, 공장생산 기반의 균일한 품질·안전성 확보,
         연구단 개발기술(PC 라멘 최적평면, ALL PC 모듈·코어·지하주차장 등)의 적용·검증이 <span style="white-space:nowrap">3대 추진 전략입니다.</span></p>
     </div>
+    <div class="stats cols3" style="margin-bottom:40px" data-reveal="up">
+      <div class="stat"><div class="v">지상 25층</div><div class="l">고층 PC 공동주택 실증 (지하 2층 ~ 지상 25층)</div></div>
+      <div class="stat"><div class="v">723세대</div><div class="l">통합공공임대 · PC 모듈러 400세대 포함</div></div>
+      <div class="stat"><div class="v">2027.6 → 2029.12</div><div class="l">착공 → 준공</div></div>
+    </div>
     <div class="grid grid-2" style="align-items:stretch">
       <figure class="photo-blend" style="margin:0" data-reveal="up">
         <img src="assets/images/demo-teaser.jpg?v=2" alt="하남교산 A-1BL 실증단지 조감도" loading="lazy" decoding="async">
@@ -179,9 +183,8 @@
       <div data-reveal="up" style="--d:.1s;display:flex;flex-direction:column;justify-content:center">
         <table class="spec-dark">
           <tr><th>위치</th><td>경기도 하남시 천현동 일원 (하남교산 A-1BL)</td></tr>
-          <tr><th>규모</th><td>지하 2층 ~ 지상 25층 · 통합공공임대</td></tr>
-          <tr><th>세대수</th><td>723세대 (PC 모듈러 400세대)</td></tr>
-          <tr><th>일정</th><td>착공 2027.6 · 준공 2029.12</td></tr>
+          <tr><th>유형</th><td>통합공공임대 (RC 323세대 + PC 모듈러 400세대)</td></tr>
+          <tr><th>사업 주체</th><td>발주 경기주택도시공사 · 시공 동부건설 · 제작 NRB</td></tr>
         </table>
         <div style="margin-top:26px">
           <a href="research-plan.html#demo-site" class="btn btn-primary">실증단지 자세히 보기</a>
@@ -192,14 +195,14 @@
 </section>
 
 <!-- ===== 참여기관 ===== -->
-<section class="section tight">
+<section class="section tight" id="consortium">
   <div class="container wide">
     <div class="section-head" data-reveal="up" style="margin-bottom:36px">
       <p class="kicker">CONSORTIUM</p>
       <h2>17개 산·학·공공 기관이 함께합니다</h2>
     </div>
     <div class="logowall">
-      <div class="lw"><img src="assets/images/partners/hanyang.png?v=3" alt="한양대학교 ERICA" loading="lazy" decoding="async"></div>
+      <div class="lw"><img src="assets/images/partners/hanyang.png?v=4" alt="한양대학교 ERICA" loading="lazy" decoding="async"></div>
       <div class="lw"><img src="assets/images/partners/soongsil.png?v=2" alt="숭실대학교" loading="lazy" decoding="async"></div>
       <div class="lw"><img src="assets/images/partners/kangnam.png?v=2" alt="강남대학교" loading="lazy" decoding="async"></div>
       <div class="lw"><img src="assets/images/partners/gnu.png?v=2" alt="경상국립대학교" loading="lazy" decoding="async"></div>
@@ -230,16 +233,16 @@
       </div>
       <div class="f-links">
         <h4>연구단소개</h4>
-        <a href="about-method.html">모듈형 PC 공법 소개</a>
         <a href="about-intro.html">연구단 구성</a>
         <a href="about-goal.html">연구목표</a>
+        <a href="about-method.html">모듈형 PC 공법 소개</a>
       </div>
       <div class="f-links">
         <h4>연구활동 · 소식</h4>
         <a href="research-plan.html">연구수행계획</a>
         <a href="research-results.html">연구성과</a>
         <a href="news-events.html">행사 · 언론보도</a>
-        <a href="resources-notice.html">공지사항</a>
+        <a href="resources-notice.html">자료실</a>
       </div>
       <div class="f-links">
         <h4>관련사이트</h4>
@@ -256,7 +259,7 @@
   </div>
 </footer>
 
-<script src="assets/js/main.js?v=8"></script>
+<script src="assets/js/main.js?v=24"></script>
 <!-- Netlify Identity: 관리자 초대/로그인 완료 처리 -->
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <script>

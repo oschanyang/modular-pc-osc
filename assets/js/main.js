@@ -2,6 +2,8 @@
 (function () {
   "use strict";
 
+  var MOTION_OK = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   /* ---- 네비게이션: 모바일 토글 + 아코디언 + 접근성 ---- */
   var toggle = document.querySelector(".nav-toggle");
   var menu = document.querySelector(".menu");
@@ -134,29 +136,76 @@
         .then(function (d) {
           var items = (d && (d.items || d.notices) || []).slice();
           if (!items.length) return;                       // 비어 있으면 안내문구 유지
+          items.forEach(function (it, oi) { it.__i = oi; }); // 상세 페이지 연결용 원본 인덱스 (정렬 전)
           items.sort(function (a, b) { return String(b.date || "").localeCompare(String(a.date || "")); });
           var emptyEl = board.querySelector(".empty-state");
           if (emptyEl) emptyEl.style.display = "none";
           var total = items.length;
+          var boardKey = (board.getAttribute("data-src") || "").split("/").pop().replace(".json", "");
+          // data-compact: 한국 게시판 관례 — 번호 | 제목(+분류칩, 첨부 시 📎) | 등록일 한 줄.
+          // 요약·썸네일·파일 상세는 상세 페이지(post.html) 몫. 없으면(언론보도) 뉴스형(썸네일+요약) 유지.
+          var compact = board.hasAttribute("data-compact");
+          var PAGE = 10;                                   // KRDS 목록 탐색 관례: 페이지당 10건
+          var rows = [];
           items.forEach(function (it, i) {
             var link = it.link && String(it.link).trim();
             var file = it.file && String(it.file).trim();
-            var row = document.createElement(link || file ? "a" : "div");
+            // 행 클릭 = 게시글 상세 페이지로 이동 (다운로드·외부이동은 상세에서 수행)
+            var row = document.createElement("a");
             row.className = "row";
-            if (link) { row.href = link; row.target = "_blank"; row.rel = "noopener"; }
-            else if (file) { row.href = file; row.setAttribute("download", ""); }
+            row.href = "post.html?b=" + encodeURIComponent(boardKey) + "&i=" + it.__i;
             var cat = (it.category && !board.hasAttribute("data-nocat")) ? '<span class="cat">' + esc(it.category) + "</span>" : "";
-            var tail = link ? ' <span style="color:var(--blue);font-size:13px;font-weight:600">바로가기 ↗</span>'
-                     : file ? ' <span style="color:var(--blue);font-size:13px;font-weight:600">첨부 ⬇</span>' : "";
-            var body = it.body && String(it.body).trim() ? '<span class="bdesc">' + esc(it.body) + "</span>" : "";
-            var thumb = it.thumb && String(it.thumb).trim() ? '<img class="thumb" src="' + esc(it.thumb) + '" alt="" loading="lazy" decoding="async">' : "";
-            if (thumb) row.classList.add("has-thumb");
+            var tail = "", body = "", thumb = "", clip = "", writer = "";
+            if (compact) {
+              // 첨부 존재 시 아이콘만 표시 (link만 있는 글은 제목만)
+              if (file) clip = ' <span class="clip" aria-label="첨부파일 있음">📎</span>';
+              writer = '<span class="writer">' + esc((it.author && String(it.author).trim()) || "관리자") + "</span>";
+            } else {
+              tail = link ? ' <span style="color:var(--blue);font-size:13px;font-weight:600">기사 링크</span>'
+                   : file ? ' <span style="color:var(--blue);font-size:13px;font-weight:600">첨부파일</span>' : "";
+              body = it.body && String(it.body).trim() ? '<span class="bdesc">' + esc(it.body) + "</span>" : "";
+              thumb = it.thumb && String(it.thumb).trim() ? '<img class="thumb" src="' + esc(it.thumb) + '" alt="" loading="lazy" decoding="async">' : "";
+              if (thumb) row.classList.add("has-thumb");
+            }
             row.innerHTML =
               '<span class="no">' + (total - i) + "</span>" + thumb +
-              '<span class="ttl">' + cat + esc(it.title || "") + tail + body + "</span>" +
+              '<span class="ttl">' + cat + esc(it.title || "") + clip + tail + body + "</span>" +
+              writer +
               '<span class="date">' + esc(it.date || "") + "</span>";
-            if (emptyEl) board.insertBefore(row, emptyEl); else board.appendChild(row);
+            rows.push(row);
           });
+
+          /* ---- 페이지네이션: 10건 초과 시 페이지 버튼 표시 ---- */
+          var pageCount = Math.ceil(rows.length / PAGE);
+          var pager = null;
+          function showPage(p) {
+            board.querySelectorAll(".row:not(.head)").forEach(function (r) { r.remove(); });
+            rows.slice((p - 1) * PAGE, p * PAGE).forEach(function (r) {
+              if (emptyEl) board.insertBefore(r, emptyEl); else board.appendChild(r);
+            });
+            if (pager) {
+              pager.querySelectorAll("button").forEach(function (b) {
+                b.classList.toggle("on", parseInt(b.getAttribute("data-p"), 10) === p);
+              });
+            }
+          }
+          if (pageCount > 1) {
+            pager = document.createElement("div");
+            pager.className = "pager";
+            for (var p = 1; p <= pageCount; p++) {
+              var btn = document.createElement("button");
+              btn.type = "button";
+              btn.textContent = p;
+              btn.setAttribute("data-p", p);
+              btn.addEventListener("click", function () {
+                showPage(parseInt(this.getAttribute("data-p"), 10));
+                board.scrollIntoView({ behavior: MOTION_OK ? "smooth" : "auto", block: "start" });
+              });
+              pager.appendChild(btn);
+            }
+            board.insertAdjacentElement("afterend", pager);
+          }
+          showPage(1);
         })
         .catch(function () { /* 로컬(file://) 등 fetch 불가 시 안내문구 유지 */ });
     });
@@ -165,6 +214,7 @@
   /* ---- 수행계획 슬라이드(.slide-fig) 한정 확대 보기 ----
      UX 조사 권고에 따라 밀도 높은 계획 슬라이드만 클릭 시 원본 확대. 그 외 이미지는 계속 무반응. */
   (function () {
+    return; // 이미지 클릭 확대 전면 비활성화 — 모든 이미지는 클릭 무반응 (2026-07 요청)
     var figs = document.querySelectorAll(".slide-fig img");
     if (!figs.length) return;
     var box = document.createElement("div");
@@ -321,7 +371,7 @@
     var ul = document.createElement("ul");
 
     function goScroll(t) {
-      requestAnimationFrame(function () { t.scrollIntoView({ behavior: "smooth" }); });
+      requestAnimationFrame(function () { t.scrollIntoView({ behavior: MOTION_OK ? "smooth" : "auto" }); });
     }
     function addItem(text, cls, onClick) {
       var li = document.createElement("li");
@@ -348,7 +398,7 @@
       if (!s.id) s.id = "sec-" + (i + 1);
       var group = s.querySelector("[data-tabs]");
       if (!group) {
-        var top = addItem(s.getAttribute("data-toc"), "", function () { goScroll(s); });
+        var top = addItem(s.getAttribute("data-toc"), "top", function () { goScroll(s); });
         top.a.setAttribute("data-spy", s.id);
         spyTargets.push(s);
         return;
@@ -482,7 +532,7 @@
     btn.setAttribute("aria-label", "맨 위로");
     btn.textContent = "↑";
     btn.addEventListener("click", function () {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: MOTION_OK ? "smooth" : "auto" });
     });
     document.body.appendChild(btn);
     var ticking = false;

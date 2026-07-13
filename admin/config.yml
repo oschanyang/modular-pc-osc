@@ -36,6 +36,7 @@ collections:
                 options: ["공지", "자료"]
                 default: "공지"
               - { label: "날짜", name: "date", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
+              - { label: "작성자(선택)", name: "author", widget: "string", required: false, hint: "미입력 시 '관리자'로 표시됩니다" }
               - { label: "첨부파일", name: "file", widget: "file", required: false, hint: "PDF, HWP, ZIP 등 (선택)" }
               - { label: "링크(선택)", name: "link", widget: "string", required: false, hint: "외부 URL — 입력 시 첨부파일보다 우선 연결됩니다" }
               - { label: "내용(선택)", name: "body", widget: "text", required: false }
@@ -63,6 +64,7 @@ collections:
                 options: ["언론보도", "보도자료"]
                 default: "언론보도"
               - { label: "날짜", name: "date", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
+              - { label: "작성자(선택)", name: "author", widget: "string", required: false, hint: "미입력 시 '관리자'로 표시됩니다" }
               - { label: "링크(기사 URL)", name: "link", widget: "string", required: false, hint: "언론 기사 URL — 입력 시 '바로가기'로 연결됩니다" }
               - { label: "썸네일 이미지", name: "thumb", widget: "image", required: false, media_folder: "/assets/images/press", public_folder: "assets/images/press", hint: "목록에 표시될 대표 이미지 (선택)" }
               - { label: "요약(내용)", name: "body", widget: "text", required: false, hint: "목록에 제목 아래 표시되는 2~3문장 요약" }
@@ -91,6 +93,7 @@ collections:
                 options: ["세미나", "워크숍", "학술행사", "기타"]
                 default: "세미나"
               - { label: "날짜", name: "date", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
+              - { label: "작성자(선택)", name: "author", widget: "string", required: false, hint: "미입력 시 '관리자'로 표시됩니다" }
               - { label: "첨부파일", name: "file", widget: "file", required: false, hint: "행사 안내문 등 (선택)" }
               - { label: "링크(선택)", name: "link", widget: "string", required: false, hint: "행사 안내 페이지 등 외부 URL (선택)" }
               - { label: "내용(선택)", name: "body", widget: "text", required: false }
